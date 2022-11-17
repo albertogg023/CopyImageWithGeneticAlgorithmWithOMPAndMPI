@@ -1,0 +1,26 @@
+#PBS -S /bin/bash
+
+#PBS -V
+#PBS -q batch
+#PBS -N test_sec
+#PBS -l walltime=00:30:00
+#PBS -l nodes=venus:ppn=12
+
+source /etc/profile.d/modules.sh
+
+cd $PBS_O_WORKDIR
+
+make sec
+
+in_file="../input/in.txt"
+out_file="../output/out.txt"
+
+while read line ; do 
+	gen=$(echo $line | tr -s ' ' | cut -f1 -d ' ')
+	tam=$(echo $line | tr -s ' ' | cut -f2 -d ' ')
+	
+	echo -e >> $out_file
+	echo -n "Executing with: " >> $out_file
+	echo -e " N_GEN = "$gen" TAM_POB = "$tam >> $out_file
+	make test_sec
+done < $in_file
