@@ -147,7 +147,8 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 
 
         // Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
-		qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
+		//qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
+		mergeSort(poblacion,0,tam_poblacion);
 	}
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIN SOLO EL PADRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -191,7 +192,8 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			}
 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
-			qsort(islaPoblacion, chunkSize, sizeof(Individuo), comp_fitness);
+			//qsort(islaPoblacion, chunkSize, sizeof(Individuo), comp_fitness);
+			mergeSort(islaPoblacion,0,chunkSize);
 			
 			// La mejor solución está en la primera posición del array
 			fitness_actual = islaPoblacion[0].fitness;
@@ -225,7 +227,9 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 		// Compartimos los datos de la imagen leida a los hijos
 		MPI_Bcast(poblacionNPM,NPM,typeIndividuo,0,MPI_COMM_WORLD);
 
-		qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
+		//qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
+		mergeSort(islaPoblacion,0,chunkSize);
+		
 
 		int index_poblacion_npm = 0;
 
