@@ -1,3 +1,9 @@
+# Salida de Heterosolar
+pit/
+
+# Mac os
+.DS_Store
+
 # Prerequisites
 *.d
 
