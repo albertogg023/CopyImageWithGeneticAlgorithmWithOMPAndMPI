@@ -12,8 +12,6 @@
 
 #define PRINT 0
 
-
-#pragma omp threadprivate(randomSeed)
 unsigned int randomSeed;
 #pragma omp threadprivate(randomSeed)
 
