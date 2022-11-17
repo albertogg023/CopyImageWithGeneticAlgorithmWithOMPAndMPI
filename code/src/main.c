@@ -81,6 +81,8 @@ int main(int argc, char **argv)
 			return(-1);
 		}
 
+		omp_set_num_threads(atoi(argv[6]));
+
 		// Leemos la imagen de entrada
 		imagen_objetivo = leer_ppm(argv[1], &ancho, &alto, &max);
 		// Reservamos memoria para la imagen de salida

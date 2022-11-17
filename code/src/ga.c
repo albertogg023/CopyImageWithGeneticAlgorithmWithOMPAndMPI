@@ -4,6 +4,7 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
+#include <omp.h>
 #include <mpi.h>
 #include <omp.h>
 #include "../include/imagen.h"
@@ -14,6 +15,7 @@
 
 #pragma omp threadprivate(randomSeed)
 unsigned int randomSeed;
+#pragma omp threadprivate(randomSeed)
 
 
 static int aleatorio(int max)

@@ -14,7 +14,7 @@ OUTFILE = ../output/out.txt
 C_FILES = main.c imagen.c ga.c
 
 sec: $(C_FILES)
-	$(CC) $(CFLAGS) $(C_FILES) -o $(EXEC) -DTIME -DDEBUG
+	$(CC) $(CFLAGS) $(C_FILES) -o $(EXEC) -DTIME -DDEBUG -fopenmp
 
 test_sec:
 	mpirun ./$(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(P_MUT)_$(N_THREADS)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(P_MUT) $(N_THREADS) $(NGM) $(NEM) $(NPM) >> $(OUTFILE)
