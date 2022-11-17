@@ -21,29 +21,32 @@ static int aleatorio(int max)
 	return (rand_r(&randomSeed) % (max + 1));
 }
 
-void mezclar(Individuo **poblacion, int izq, int med, int der)
+void mezclar(Individuo *poblacion, int izq, int med, int der)
 {	
 	int i, j, k;
 	
-	Individuo **pob = (Individuo **) malloc((der - izq)*sizeof(Individuo *));
+	Individuo *pob = (Individuo *) malloc((der - izq)*sizeof(Individuo));
 	assert(pob);
 	
 	for(i = 0; i < (der - izq); i++) {
-		pob[i] = (Individuo *) malloc(sizeof(Individuo));
+		Individuo ind;
+		pob[i] = ind;
 	}
 	
 	k = 0;
 	i = izq;
 	j = med;
 	while( (i < med) && (j < der) ) {
-		if (poblacion[i]->fitness < poblacion[j]->fitness) {
-			memmove(pob[k],poblacion[i],sizeof(Individuo));
+		if (poblacion[i].fitness < poblacion[j].fitness) {
+			//memmove(pob[k],poblacion[i],sizeof(Individuo));
+			poblacion[i]=pob[k];
 			k++;
 			i++;
 
 		}
 		else {
-			memmove(pob[k],poblacion[j],sizeof(Individuo));
+			//memmove(pob[k],poblacion[j],sizeof(Individuo));
+			poblacion[j]=pob[k];
 			k++;
 			j++;
 
@@ -51,22 +54,25 @@ void mezclar(Individuo **poblacion, int izq, int med, int der)
 	}
 	
 	for(; i < med; i++) {
-		memmove(pob[k++], poblacion[i],sizeof(Individuo));
+		//memmove(pob[k++], poblacion[i],sizeof(Individuo));
+		poblacion[i]=pob[k++];
 	}
 	
 	for(; j < der; j++) {
-		memmove(pob[k++],poblacion[j],sizeof(Individuo));
+		//memmove(pob[k++],poblacion[j],sizeof(Individuo));
+		poblacion[j]=pob[k++];
 	}
 	
 	i = 0;
 	for(i = 0; i < (der - izq); i++) {
-		memmove(poblacion[i+izq],pob[i],sizeof(Individuo));
-		free(pob[i]);
+		//memmove(poblacion[i+izq],pob[i],sizeof(Individuo));
+		//free(pob[i]);
+		pob[i]=poblacion[i+izq];
 	}
 	free(pob);
 }
 
-void mergeSort(Individuo **poblacion, int izq, int der)
+void mergeSort(Individuo *poblacion, int izq, int der)
 {
 	int med = (izq + der) / 2;
 	if ((der - izq) < 8)
@@ -217,7 +223,10 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			}
 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
-			qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
+			//qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
+
+			mergeSort(poblacion,0,tam_poblacion);
+
 
 			for(int i=0;i<NPM;i++){
 				poblacionNPM[i]=poblacion[i];
