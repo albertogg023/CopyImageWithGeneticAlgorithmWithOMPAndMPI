@@ -5,16 +5,20 @@
 #include <assert.h>
 #include <time.h>
 #include <mpi.h>
+#include <omp.h>
 #include "../include/imagen.h"
 #include "../include/ga.h"
 
 #define PRINT 0
 
+
+#pragma omp threadprivate(randomSeed)
 unsigned int randomSeed;
+
 
 static int aleatorio(int max)
 {
-	return (rand() % (max + 1)); 
+	return (rand_r(&randomSeed) % (max + 1));
 }
 
 void mezclar(Individuo **poblacion, int izq, int med, int der)
@@ -131,14 +135,16 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 		poblacionNEM = (Individuo *) malloc(numProcesos*NEM*sizeof(Individuo));
 		assert(poblacionNEM);
 
-		// TODO: preguntar por que el profesor lo ha separado en dos bucles, quizas mejora rendimiento...
+		//! MODIFICAR PRÁCTICA
+
+
         for(i = 0; i < tam_poblacion; i++) {
 			init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
 			poblacion[i].fitness = 0;
-		}
-		for (i = 0; i < tam_poblacion; i++) {
 			fitness(imagen_objetivo, &poblacion[i], num_pixels);
 		}
+
+
 
         // Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 		qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
