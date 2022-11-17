@@ -29,8 +29,7 @@ void mezclar(Individuo *poblacion, int izq, int med, int der)
 	assert(pob);
 	
 	for(i = 0; i < (der - izq); i++) {
-		Individuo ind;
-		pob[i] = ind;
+		pob[i] = poblacion[i];
 	}
 	
 	k = 0;
@@ -154,7 +153,19 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 
         // Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 		//qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
-		mergeSort(poblacion,0,tam_poblacion);
+
+		int med = floor(tam_poblacion / 2);
+		#pragma omp parallel sections
+		{
+		#pragma omp section
+						{
+							mergeSort(poblacion, 0, med);
+						}
+		#pragma omp section
+						{
+							mergeSort(poblacion, med, tam_poblacion);
+						}
+		}
 	}
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIN SOLO EL PADRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -199,8 +210,20 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 			//qsort(islaPoblacion, chunkSize, sizeof(Individuo), comp_fitness);
-			mergeSort(islaPoblacion,0,chunkSize);
-			
+
+			int med = floor(chunkSize / 2);
+			#pragma omp parallel sections
+			{
+			#pragma omp section
+							{
+								mergeSort(islaPoblacion, 0, med);
+							}
+			#pragma omp section
+							{
+								mergeSort(islaPoblacion, med, chunkSize);
+							}
+			}
+
 			// La mejor solución está en la primera posición del array
 			fitness_actual = islaPoblacion[0].fitness;
 
@@ -225,7 +248,19 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 			//qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
 
-			mergeSort(poblacion,0,tam_poblacion);
+
+			int med = floor(tam_poblacion / 2);
+			#pragma omp parallel sections
+			{
+			#pragma omp section
+							{
+								mergeSort(poblacion, 0, med);
+							}
+			#pragma omp section
+							{
+								mergeSort(poblacion, med, tam_poblacion);
+							}
+			}
 
 
 			for(int i=0;i<NPM;i++){
@@ -237,7 +272,18 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 		MPI_Bcast(poblacionNPM,NPM,typeIndividuo,0,MPI_COMM_WORLD);
 
 		//qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
-		mergeSort(islaPoblacion,0,chunkSize);
+			int med = floor(chunkSize / 2);
+			#pragma omp parallel sections
+			{
+			#pragma omp section
+							{
+								mergeSort(islaPoblacion, 0, med);
+							}
+			#pragma omp section
+							{
+								mergeSort(islaPoblacion, med, chunkSize);
+							}
+			}
 		
 
 		int index_poblacion_npm = 0;
