@@ -4,7 +4,7 @@
 #PBS -q batch
 #PBS -N test_sec
 #PBS -l walltime=00:30:00
-#PBS -l nodes=venus:ppn=12
+#PBS -l nodes=saturno:ppn=24
 
 source /etc/profile.d/modules.sh
 

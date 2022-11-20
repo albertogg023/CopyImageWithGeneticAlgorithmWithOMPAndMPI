@@ -140,9 +140,9 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 		poblacionNEM = (Individuo *) malloc(numProcesos*NEM*sizeof(Individuo));
 		assert(poblacionNEM);
 
-		//! MODIFICAR PRÁCTICA
+		
 
-
+		#pragma omp for schedule(dynamic)
         for(i = 0; i < tam_poblacion; i++) {
 			init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
 			poblacion[i].fitness = 0;
@@ -152,20 +152,8 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 
 
         // Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
-		//qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
-
-		int med = floor(tam_poblacion / 2);
-		#pragma omp parallel sections
-		{
-		#pragma omp section
-						{
-							mergeSort(poblacion, 0, med);
-						}
-		#pragma omp section
-						{
-							mergeSort(poblacion, med, tam_poblacion);
-						}
-		}
+		qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);		
+		
 	}
 
 	// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FIN SOLO EL PADRE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -209,20 +197,9 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			}
 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
-			//qsort(islaPoblacion, chunkSize, sizeof(Individuo), comp_fitness);
+			qsort(islaPoblacion, chunkSize, sizeof(Individuo), comp_fitness);
 
-			int med = floor(chunkSize / 2);
-			#pragma omp parallel sections
-			{
-			#pragma omp section
-							{
-								mergeSort(islaPoblacion, 0, med);
-							}
-			#pragma omp section
-							{
-								mergeSort(islaPoblacion, med, chunkSize);
-							}
-			}
+			
 
 			// La mejor solución está en la primera posición del array
 			fitness_actual = islaPoblacion[0].fitness;
@@ -246,21 +223,9 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			}
 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
-			//qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
+			qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
 
 
-			int med = floor(tam_poblacion / 2);
-			#pragma omp parallel sections
-			{
-			#pragma omp section
-							{
-								mergeSort(poblacion, 0, med);
-							}
-			#pragma omp section
-							{
-								mergeSort(poblacion, med, tam_poblacion);
-							}
-			}
 
 
 			for(int i=0;i<NPM;i++){
@@ -271,19 +236,8 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 		// Compartimos los datos de la imagen leida a los hijos
 		MPI_Bcast(poblacionNPM,NPM,typeIndividuo,0,MPI_COMM_WORLD);
 
-		//qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
-			int med = floor(chunkSize / 2);
-			#pragma omp parallel sections
-			{
-			#pragma omp section
-							{
-								mergeSort(islaPoblacion, 0, med);
-							}
-			#pragma omp section
-							{
-								mergeSort(islaPoblacion, med, chunkSize);
-							}
-			}
+		qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
+			
 		
 
 		int index_poblacion_npm = 0;
@@ -329,17 +283,41 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 	//? el lugar del corte a partir del cual se distribuyen los
 	//? genes de un padre o del otro
 
-	int random_number = aleatorio(num_pixels);
+	 int random_number = aleatorio(num_pixels);
+	// 		for (int i = 0; i < random_number; i++)
+	// 		{
+	// 			hijo1->imagen[i] = padre1->imagen[i];
+	// 			hijo2->imagen[i] = padre2->imagen[i];
+	// 		}
+	// 		for (int i = random_number; i < num_pixels; i++)
+	// 		{
+	// 			hijo1->imagen[i] = padre2->imagen[i];
+	// 			hijo2->imagen[i] = padre1->imagen[i];
+	// 		}
+
+	#pragma omp parallel sections
+	{
+		#pragma omp section
+		{
 			for (int i = 0; i < random_number; i++)
 			{
+
+				//! paralelizable
+
 				hijo1->imagen[i] = padre1->imagen[i];
+
 				hijo2->imagen[i] = padre2->imagen[i];
 			}
+		}
+		#pragma omp section
+		{
 			for (int i = random_number; i < num_pixels; i++)
 			{
 				hijo1->imagen[i] = padre2->imagen[i];
 				hijo2->imagen[i] = padre1->imagen[i];
 			}
+		}
+	}
 }
 
 void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
@@ -351,6 +329,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 	individuo->fitness = 0;
 
+	#pragma omp parallel for reduction(+: diff)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
@@ -361,6 +340,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 void mutar(Individuo *actual, int max, int num_pixels, float prob_mutacion)
 {
+	#pragma omp for schedule(dynamic)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		if (aleatorio(1500)<= 1)
