@@ -2,25 +2,14 @@
 
 #PBS -V
 #PBS -q batch
-#PBS -N test_sec
+#PBS -N test_mpi
 #PBS -l walltime=00:30:00
-#PBS -l nodes=saturno:ppn=24
+#PBS -l nodes=marte:ppn=6+venus:ppn=6
 
 source /etc/profile.d/modules.sh
+module load openmpi
 
 cd $PBS_O_WORKDIR
 
-make sec
-
-in_file="../input/in.txt"
-out_file="../output/out.txt"
-
-while read line ; do 
-	gen=$(echo $line | tr -s ' ' | cut -f1 -d ' ')
-	tam=$(echo $line | tr -s ' ' | cut -f2 -d ' ')
-	
-	echo -e >> $out_file
-	echo -n "Executing with: " >> $out_file
-	echo -e " N_GEN = "$gen" TAM_POB = "$tam >> $out_file
-	make test_sec
-done < $in_file
+make mpi
+make test_mpi H1="marte" H2="venus" NP=6 N_GEN=2000

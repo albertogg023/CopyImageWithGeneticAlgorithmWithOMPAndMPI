@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <mpi.h>
+#include <omp.h>
 #include "../include/imagen.h"
 #include "../include/ga.h"
 #include "./derivados_mpi.c"
@@ -66,7 +67,7 @@ int main(int argc, char **argv)
 			return(-1);
 		}
 
-		if (atoi(argv[7]) <= 0 || atoi(argv[7]) >= atoi(argv[3]) || atoi(argv[3]) % atoi(argv[7]) != 0) {
+		if (atoi(argv[7]) <= 0 || atoi(argv[7]) > atoi(argv[3]) || atoi(argv[3]) % atoi(argv[7]) != 0) {
 			printf("NGM debe ser menor que el número de generaciones, mayor que 0 y que sea un divididendo del numero de generaciones\n");
 			return(-1);
 		}
@@ -82,8 +83,7 @@ int main(int argc, char **argv)
 		}
 
 		omp_set_num_threads(atoi(argv[6]));
-		//omp_set_num_threads(4);
-
+		
 		// Leemos la imagen de entrada
 		imagen_objetivo = leer_ppm(argv[1], &ancho, &alto, &max);
 		// Reservamos memoria para la imagen de salida
