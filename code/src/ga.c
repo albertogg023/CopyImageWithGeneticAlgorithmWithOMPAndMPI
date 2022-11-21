@@ -20,68 +20,6 @@ static int aleatorio(int max)
 	return (rand_r(&randomSeed) % (max + 1));
 }
 
-void mezclar(Individuo *poblacion, int izq, int med, int der)
-{	
-	int i, j, k;
-	
-	Individuo *pob = (Individuo *) malloc((der - izq)*sizeof(Individuo));
-	assert(pob);
-	
-	for(i = 0; i < (der - izq); i++) {
-		pob[i] = poblacion[i];
-	}
-	
-	k = 0;
-	i = izq;
-	j = med;
-	while( (i < med) && (j < der) ) {
-		if (poblacion[i].fitness < poblacion[j].fitness) {
-			//memmove(pob[k],poblacion[i],sizeof(Individuo));
-			poblacion[i]=pob[k];
-			k++;
-			i++;
-
-		}
-		else {
-			//memmove(pob[k],poblacion[j],sizeof(Individuo));
-			poblacion[j]=pob[k];
-			k++;
-			j++;
-
-		}
-	}
-	
-	for(; i < med; i++) {
-		//memmove(pob[k++], poblacion[i],sizeof(Individuo));
-		poblacion[i]=pob[k++];
-	}
-	
-	for(; j < der; j++) {
-		//memmove(pob[k++],poblacion[j],sizeof(Individuo));
-		poblacion[j]=pob[k++];
-	}
-	
-	i = 0;
-	for(i = 0; i < (der - izq); i++) {
-		//memmove(poblacion[i+izq],pob[i],sizeof(Individuo));
-		//free(pob[i]);
-		pob[i]=poblacion[i+izq];
-	}
-	free(pob);
-}
-
-void mergeSort(Individuo *poblacion, int izq, int der)
-{
-	int med = (izq + der) / 2;
-	if ((der - izq) < 8)
-	{
-		return;
-	}
-	mergeSort(poblacion, izq, med);
-	mergeSort(poblacion, med, der);
-	mezclar(poblacion, izq, med, der);	
-}
-
 void init_imagen_aleatoria(RGB *imagen, int max, int total)
 {
 	for (int i = 0; i < total; i++)
