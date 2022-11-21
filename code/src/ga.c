@@ -41,8 +41,6 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 {	
 	// ******************************** INICIO TODOS ********************************************
 	
-	// Inicializar srandr
-	randomSeed = 47 * time(NULL);
 	// Variables del algoritmo genetico
 	int i, mutation_start;
 	char output_file2[32];
@@ -76,18 +74,23 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 
 		poblacionNEM = (Individuo *) malloc(numProcesos*NEM*sizeof(Individuo));
 		assert(poblacionNEM);
-
 		
-
-		//#pragma omp for schedule(dynamic)
-        for(i = 0; i < tam_poblacion; i++) {
-			init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
-			poblacion[i].fitness = 0;
-			fitness(imagen_objetivo, &poblacion[i], num_pixels);
+		#pragma omp parallel
+		{
+			// Inicializar srandr
+			randomSeed = 47 * time(NULL);
+			//omp_set_nested(1);
+			#pragma omp for schedule(dynamic)
+			for(i = 0; i < tam_poblacion; i++) {
+				init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
+				poblacion[i].fitness = 0;
+			}
+			#pragma omp for schedule(dynamic)
+			for(i = 0; i < tam_poblacion; i++) {
+				fitness(imagen_objetivo, &poblacion[i], num_pixels);
+			}
 		}
-
-
-
+		
         // Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 		qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);		
 		
@@ -136,8 +139,6 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 			qsort(islaPoblacion, chunkSize, sizeof(Individuo), comp_fitness);
 
-			
-
 			// La mejor solución está en la primera posición del array
 			fitness_actual = islaPoblacion[0].fitness;
 
@@ -162,9 +163,6 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			// Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 			qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);
 
-
-
-
 			for(int i=0;i<NPM;i++){
 				poblacionNPM[i]=poblacion[i];
 			}
@@ -174,8 +172,6 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 		MPI_Bcast(poblacionNPM,NPM,typeIndividuo,0,MPI_COMM_WORLD);
 
 		qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
-			
-		
 
 		int index_poblacion_npm = 0;
 
@@ -232,7 +228,7 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 	 			hijo2->imagen[i] = padre1->imagen[i];
 	 		}
 
-	/*#pragma omp parallel sections
+	/* falla #pragma omp parallel sections
 	{
 		#pragma omp section
 		{
@@ -263,7 +259,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 	individuo->fitness = 0;
 
-	//#pragma omp parallel for reduction(+: diff)
+	// falla #pragma omp parallel for reduction(+: diff)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
@@ -274,7 +270,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 void mutar(Individuo *actual, int max, int num_pixels, float prob_mutacion)
 {
-	//#pragma omp for schedule(dynamic)
+	// falla #pragma omp parallel for schedule(dynamic)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		if (aleatorio(1500)<= 1)
