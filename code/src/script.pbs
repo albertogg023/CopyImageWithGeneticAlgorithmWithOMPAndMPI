@@ -4,7 +4,7 @@
 #PBS -q batch
 #PBS -N test_mpi
 #PBS -l walltime=00:30:00
-#PBS -l nodes=marte:ppn=6+venus:ppn=6
+#PBS -l nodes=marte:ppn=6+venus:ppn=12
 
 source /etc/profile.d/modules.sh
 module load openmpi
@@ -12,4 +12,4 @@ module load openmpi
 cd $PBS_O_WORKDIR
 
 make mpi
-make test_mpi H1="marte" H2="venus" NP=6 N_GEN=2000
+make test_mpi

@@ -41,48 +41,36 @@ int main(int argc, char **argv)
 
 	if(idProceso == 0){
 		// Comprobamos los datos de entrada del programa
-		if(argc < 9) {
+		if(argc < 8) {
 			printf("Ayuda:\n"); 
 			printf("  ./programa entrada salida num_generaciones tam_poblacion\n");
 			return(-1);
 		}
-		
+
+		if (atoi(argv[3]) < 0) {
+			printf("El número de generaciones debe ser un número natural 4\n");
+			return(-1);
+		}
+
 		if (atoi(argv[4]) % 4 != 0) {
 			printf("El tamaño de la población debe ser divisible por 4\n");
 			return(-1);
 		}
 
-		if (atof(argv[5]) > 1 || atof(argv[5]) < 0) {
-			printf("La probabilidad de mutación debe ser un número entre 0 y 1\n");
+		if (atoi(argv[5]) <= 0 || atoi(argv[5]) > atoi(argv[3]) || atoi(argv[3]) % atoi(argv[5]) != 0) {
+			printf("NGM debe ser menor que el número de generaciones, mayor que 0 y que sea un divisor del numero de generaciones\n");
 			return(-1);
 		}
 
-		if (atoi(argv[6]) <= 0) {
-			printf("El número de cores no puede ser 0 o negativo\n");
-			return(-1);
-		}
-
-		if (atoi(argv[6]) <= 0) {
-			printf("El número de cores no puede ser 0 o negativo\n");
-			return(-1);
-		}
-
-		if (atoi(argv[7]) <= 0 || atoi(argv[7]) > atoi(argv[3]) || atoi(argv[3]) % atoi(argv[7]) != 0) {
-			printf("NGM debe ser menor que el número de generaciones, mayor que 0 y que sea un divididendo del numero de generaciones\n");
-			return(-1);
-		}
-
-		if (atoi(argv[8]) <= 0) {
+		if (atoi(argv[6]) <= 0 || atoi(argv[6]) >= atoi(argv[4])) {
 			printf("NEM debe ser mayor que cero y menor que el tamaño de población \n");
 			return(-1);
 		}
 
-		if (atoi(argv[9]) <= 0) {
+		if (atoi(argv[7]) <= 0 || atoi(argv[7]) >= atoi(argv[4])) {
 			printf("NPM debe ser mayor que cero y menor que el tamaño de población \n");
 			return(-1);
 		}
-
-		omp_set_num_threads(atoi(argv[6]));
 		
 		// Leemos la imagen de entrada
 		imagen_objetivo = leer_ppm(argv[1], &ancho, &alto, &max);
@@ -126,7 +114,7 @@ int main(int argc, char **argv)
 
 	// Llamamos al algortimo genetico
 	crear_imagen(imagen_objetivo, ancho, alto, max, \
-				 atoi(argv[3]), atoi(argv[4]), atof(argv[5]), mejor_imagen, argv[2], idProceso, numProcesos, atoi(argv[7]), atoi(argv[8]), atoi(argv[9]), individuo_type, rgb_type);	
+				 atoi(argv[3]), atoi(argv[4]), atof(argv[5]), mejor_imagen, argv[2], idProceso, numProcesos, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), individuo_type, rgb_type);	
 	
 	free(imagen_objetivo);
 

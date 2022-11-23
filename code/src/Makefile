@@ -1,12 +1,15 @@
-CC = mpicc
-CFLAGS = -O3 -Wall -std=c99 -g -lm
-
 T_POB = 200
-P_MUT = 0.0001
-N_THREADS = 4
+N_GEN = 2000
 NGM = 400
 NEM = 4
 NPM = 2
+
+NP = 6
+H1 = "marte"
+H2 = "venus"
+
+CC = mpicc
+CFLAGS = -O3 -Wall -std=c99 -g -lm
 
 EXEC = mpi
 OUTFILE = ../output/out.txt
@@ -16,7 +19,11 @@ mpi: $(C_FILES)
 	$(CC) $(CFLAGS) $(C_FILES) -lm -o $(EXEC) -fopenmp -DTIME -DDEBUG
 
 test_mpi:
-	mpirun -np $(NP) -host $(H1) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(P_MUT)_$(N_THREADS)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(P_MUT) $(N_THREADS) $(NGM) $(NEM) $(NPM) : -np $(NP) -host $(H2) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(P_MUT)_$(N_THREADS)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(P_MUT) $(N_THREADS) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
+	mpirun -np $(NP) -host $(H1) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) : -np $(NP) -host $(H2) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
+
+#test_mpi:
+#	mpirun -np $(NP) -host $(H1) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) : -np $(NP) -host $(H2) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
+#make test_mpi H1="marte" H2="venus" NP=6 N_GEN=2000
 
 clean:
 	rm -f $(EXEC)
