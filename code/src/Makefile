@@ -1,6 +1,6 @@
 T_POB = 200
-N_GEN = 2000
-NGM = 400
+N_GEN = 4000
+NGM = 200
 NEM = 4
 NPM = 2
 
@@ -23,5 +23,3 @@ test_mpi:
 
 clean:
 	rm -f $(EXEC)
-
-#H1="marte" H2="venus" NP=6 N_GEN=2000

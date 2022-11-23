@@ -33,7 +33,7 @@ void init_imagen_aleatoria(RGB *imagen, int max, int total)
 //TODO: cambiar a Individuo
 static int comp_fitness(const void *a, const void *b)
 {
-	return ((Individuo *)&a)->fitness - ((Individuo *)&b)->fitness;
+	return ((Individuo *)a)->fitness - ((Individuo *)b)->fitness;
 }
 
 void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
@@ -222,21 +222,10 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 	//? el lugar del corte a partir del cual se distribuyen los
 	//? genes de un padre o del otro
 
-	 int random_number = aleatorio(num_pixels);
-	 		for (int i = 0; i < random_number; i++)
-	 		{
-	 			hijo1->imagen[i] = padre1->imagen[i];
-	 			hijo2->imagen[i] = padre2->imagen[i];
-	 		}
-	 		for (int i = random_number; i < num_pixels; i++)
-	 		{
-	 			hijo1->imagen[i] = padre2->imagen[i];
-	 			hijo2->imagen[i] = padre1->imagen[i];
-	 		}
-
-	//#pragma omp parallel sections
+	int random_number = aleatorio(num_pixels);
+	#pragma omp parallel sections
 	{
-		//#pragma omp section
+		#pragma omp section
 		{
 			for (int i = 0; i < random_number; i++)
 			{
@@ -245,7 +234,7 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 				hijo2->imagen[i] = padre2->imagen[i];
 			}
 		}
-		//#pragma omp section
+		#pragma omp section
 		{
 			for (int i = random_number; i < num_pixels; i++)
 			{
@@ -265,7 +254,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 	individuo->fitness = 0;
 
-	//#pragma omp parallel for reduction(+: diff)
+	#pragma omp parallel for reduction(+: diff)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
@@ -276,7 +265,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 void mutar(Individuo *actual, int max, int num_pixels)
 {
-	//#pragma omp parallel for schedule(dynamic)
+	#pragma omp parallel for
 	for (int i = 0; i < num_pixels; i++)
 	{
 		if (aleatorio(1500)<= 1)
