@@ -114,7 +114,11 @@ int main(int argc, char **argv)
 
 	// Llamamos al algortimo genetico
 	crear_imagen(imagen_objetivo, ancho, alto, max, \
-				 atoi(argv[3]), atoi(argv[4]), atof(argv[5]), mejor_imagen, argv[2], idProceso, numProcesos, atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), individuo_type, rgb_type);	
+				 atoi(argv[3]), atoi(argv[4]), \
+				 mejor_imagen, argv[2], \
+				 idProceso, numProcesos, \
+				 atoi(argv[5]), atoi(argv[6]), atoi(argv[7]), \
+				 individuo_type, rgb_type);	
 	
 	free(imagen_objetivo);
 
@@ -135,7 +139,7 @@ int main(int argc, char **argv)
 			printf("Execution Time = %.6lf seconds\n", (tf - ti));
 		#endif
 	}
-
+	
 	free(mejor_imagen); 
 	
 	// Finalizamos entorno MPI

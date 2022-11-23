@@ -5,7 +5,7 @@ NEM = 4
 NPM = 2
 
 NP = 6
-H1 = "marte"
+H1 = "marte" 
 H2 = "venus"
 
 CC = mpicc
@@ -21,9 +21,7 @@ mpi: $(C_FILES)
 test_mpi:
 	mpirun -np $(NP) -host $(H1) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) : -np $(NP) -host $(H2) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
 
-#test_mpi:
-#	mpirun -np $(NP) -host $(H1) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) : -np $(NP) -host $(H2) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
-#make test_mpi H1="marte" H2="venus" NP=6 N_GEN=2000
-
 clean:
 	rm -f $(EXEC)
+
+#H1="marte" H2="venus" NP=6 N_GEN=2000

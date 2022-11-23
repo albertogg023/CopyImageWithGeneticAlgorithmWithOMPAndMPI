@@ -30,14 +30,18 @@ void init_imagen_aleatoria(RGB *imagen, int max, int total)
 	}
 }
 
+//TODO: cambiar a Individuo
 static int comp_fitness(const void *a, const void *b)
 {
-	return ((Individuo *)a)->fitness - ((Individuo *)b)->fitness;
+	return ((Individuo *)&a)->fitness - ((Individuo *)&b)->fitness;
 }
 
-void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int num_generaciones, int tam_poblacion, float prob_mutacion,
+void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
+	int num_generaciones, int tam_poblacion,
 	RGB *imagen_resultado, const char *output_file,
-	int idProceso, int numProcesos, int NGM, int NEM, int NPM, MPI_Datatype typeIndividuo, MPI_Datatype typeRGB)
+	int idProceso, int numProcesos,
+	int NGM, int NEM, int NPM,
+	MPI_Datatype typeIndividuo, MPI_Datatype typeRGB)
 {	
 	// ******************************** INICIO TODOS ********************************************
 	
@@ -74,18 +78,20 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 
 		poblacionNEM = (Individuo *) malloc(numProcesos*NEM*sizeof(Individuo));
 		assert(poblacionNEM);
-		
 		#pragma omp parallel
 		{
 			// Inicializar srandr
 			randomSeed = 47 * time(NULL);
+		}
+		#pragma omp parallel
+		{
 			//omp_set_nested(1);
-			#pragma omp for schedule(dynamic)
+			#pragma omp for
 			for(i = 0; i < tam_poblacion; i++) {
 				init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
 				poblacion[i].fitness = 0;
 			}
-			#pragma omp for schedule(dynamic)
+			#pragma omp for
 			for(i = 0; i < tam_poblacion; i++) {
 				fitness(imagen_objetivo, &poblacion[i], num_pixels);
 			}
@@ -128,7 +134,7 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max, int 
 			mutation_start = chunkSize / 4;
 
 			for (i = mutation_start; i < chunkSize; i++){
-				mutar(&islaPoblacion[i], max, num_pixels, prob_mutacion);
+				mutar(&islaPoblacion[i], max, num_pixels);
 			}
 
 			// Recalcular Fitness
@@ -228,9 +234,9 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 	 			hijo2->imagen[i] = padre1->imagen[i];
 	 		}
 
-	/* falla #pragma omp parallel sections
+	//#pragma omp parallel sections
 	{
-		#pragma omp section
+		//#pragma omp section
 		{
 			for (int i = 0; i < random_number; i++)
 			{
@@ -239,7 +245,7 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 				hijo2->imagen[i] = padre2->imagen[i];
 			}
 		}
-		#pragma omp section
+		//#pragma omp section
 		{
 			for (int i = random_number; i < num_pixels; i++)
 			{
@@ -247,7 +253,7 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 				hijo2->imagen[i] = padre1->imagen[i];
 			}
 		}
-	}*/
+	}
 }
 
 void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
@@ -259,7 +265,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 	individuo->fitness = 0;
 
-	// falla #pragma omp parallel for reduction(+: diff)
+	//#pragma omp parallel for reduction(+: diff)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
@@ -268,9 +274,9 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 	individuo->fitness=diff;
 }
 
-void mutar(Individuo *actual, int max, int num_pixels, float prob_mutacion)
+void mutar(Individuo *actual, int max, int num_pixels)
 {
-	// falla #pragma omp parallel for schedule(dynamic)
+	//#pragma omp parallel for schedule(dynamic)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		if (aleatorio(1500)<= 1)
