@@ -1,13 +1,13 @@
-T_POB = 200
-N_GEN = 4000
-NGM = 200
+T_POB = 256
+N_GEN = 2000
+NGM = 100
 NEM = 4
 NPM = 2
 
 H1 = "marte" 
-NPH1 = 2
+NPH1 = 3
 H2 = "venus"
-NPH2 = 4
+NPH2 = 6
 
 CC = mpicc
 CFLAGS = -O3 -Wall -std=c99 -g -lm -fopenmp

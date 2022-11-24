@@ -30,7 +30,6 @@ void init_imagen_aleatoria(RGB *imagen, int max, int total)
 	}
 }
 
-//TODO: cambiar a Individuo
 static int comp_fitness(const void *a, const void *b)
 {
 	return ((Individuo *)a)->fitness - ((Individuo *)b)->fitness;
@@ -72,28 +71,25 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
 	
 	// ---------------- A. Se inicializa la poblacion y se calcula su fitness inicial -------------------
 	if(idProceso == 0){
-		// Reservamos memoria para un array de arrays que representa la poblacion
+		// Reservamos memoria para el array de poblacion del padre
 		poblacion = (Individuo *) malloc(tam_poblacion*sizeof(Individuo));
 		assert(poblacion);
-
+		// Reservamos memoria para el array de NEM del padre
 		poblacionNEM = (Individuo *) malloc(numProcesos*NEM*sizeof(Individuo));
 		assert(poblacionNEM);
 
-		#pragma omp parallel num_threads(3)
+		// Inicializamos la poblacion inicial y calculamos su fitness
+		#pragma omp parallel 
 		{
 			// Inicializar srandr
 			randomSeed = 47 * time(NULL);
 			#pragma omp for
 			for(i = 0; i < tam_poblacion; i++) {
 				init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
-				poblacion[i].fitness = 0;
-			}
-			#pragma omp for
-			for(i = 0; i < tam_poblacion; i++) {
 				fitness(imagen_objetivo, &poblacion[i], num_pixels);
 			}
 		}
-		
+
         // Ordenar individuos según la función de bondad (menor "fitness" --> más aptos)
 		qsort(poblacion, tam_poblacion, sizeof(Individuo), comp_fitness);		
 		
@@ -104,8 +100,8 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
 
 
 	// ******************************** INICIO TODOS ********************************************
-
-	// Reservamos memoria para porcion de subpoblacion de cada proceso (OJO: tambien se crea en el padre)
+	MPI_Barrier(MPI_COMM_WORLD);
+	// Reservamos memoria para las estructuras de cada proceso
     islaPoblacion = (Individuo *) malloc(chunkSize*sizeof(Individuo));
 	assert(islaPoblacion);
 	islaPoblacionNEM = (Individuo *) malloc(NEM*sizeof(Individuo));
@@ -177,7 +173,6 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
 		qsort(islaPoblacion,chunkSize,sizeof(Individuo),comp_fitness);
 
 		int index_poblacion_npm = 0;
-
 		for (int i = chunkSize - 1; i > chunkSize - 1 - NPM; i--)
 		{
 			islaPoblacion[i] = poblacionNPM[index_poblacion_npm];
@@ -212,13 +207,11 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
 
 }
 
+//? Generamos un numero aleatorio de entre 0 y el numero total de pixeles para elegir
+//? el lugar del corte a partir del cual se distribuyen los
+//? genes de un padre o del otro
 void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *hijo2, int num_pixels)
 {
-
-	//? Generamos un numero aleatorio de entre 0 y el numero total de pixeles para elegir
-	//? el lugar del corte a partir del cual se distribuyen los
-	//? genes de un padre o del otro
-
 	int random_number = aleatorio(num_pixels);
 	//#pragma omp parallel sections
 	{
@@ -242,27 +235,24 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 	}
 }
 
+// Determina la calidad del individuo (similitud con el objetivo)
+// calculando la suma de la distancia existente entre los pixeles
 void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 {
-	// Determina la calidad del individuo (similitud con el objetivo)
-	// calculando la suma de la distancia existente entre los pixeles
-
 	double diff = 0.0;
-
 	individuo->fitness = 0;
 
-	#pragma omp parallel for reduction(+: diff) num_threads(3)
+	#pragma omp parallel for reduction(+: diff) num_threads(2)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
 	}
-	
-	individuo->fitness=diff;
+	individuo->fitness = diff;
 }
 
 void mutar(Individuo *actual, int max, int num_pixels)
 {
-	#pragma omp parallel for num_threads(3)
+	#pragma omp parallel for num_threads(2)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		if (aleatorio(1500)<= 1)

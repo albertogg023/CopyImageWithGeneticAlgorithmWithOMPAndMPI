@@ -46,7 +46,7 @@ RGB *leer_ppm(const char *file, int *ancho, int *alto, int *max)
 	RGB *imagen = (RGB *) malloc(size*sizeof(RGB));
 	assert(imagen);
 	
-	for(i=0; i<size; i++) {				//? recorremos solo hasta <size porque si no nos pasamos de iteraciones ( >255)
+	for(i=0; i<size; i++) {
 		n = fscanf(fd, "%d %d %d", &red, &green, &blue);
 		assert(n == 3);
 		
@@ -78,48 +78,34 @@ void escribir_ppm(const char *fichero, int ancho, int alto, int max, const RGB *
 }
 
 struct Pixel get_value_from_matrix(int x , int y,int ancho,int alto,RGB *imagen){
-
 	//? Consigue la suma de valores rgb de la celda
 
 	//* Por cada fila le sumammos el ancho
-
 	int translation_number=y*ancho;
-
 	//* Sumamos el desplazamiento horizontal al vertical
-
 	int cell=translation_number+x;
 
 	struct Pixel p;
-
 	p.r=imagen[cell].r;
 	p.g=imagen[cell].g;
 	p.b=imagen[cell].b;
 
 	return p;
-
 }
 
 int get_position_from_matrix(int x , int y,int ancho,int alto,RGB *imagen){
-
 	//? Consigue la posicion en imagen de una coordenada x e y
 
 	//* Por cada fila le sumammos el ancho
-
 	int translation_number=y*ancho;
-
 	//* Sumamos el desplazamiento horizontal al vertical
-
 	return translation_number+x;
-
 }
 
 
 void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *imagen){
-
 	int available_near_cells = 0;
-
 	struct Pixel pixel;
-
 	struct Pixel softened_pixel;
 
 	softened_pixel.r=0;
@@ -128,7 +114,6 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 
 	if (y - 1 >= 0 && x - 1 >= 0) // up left
 	{
-
 		pixel = get_value_from_matrix(y - 1, x - 1, ancho, alto, imagen_aux);
 		available_near_cells += 1;
 		softened_pixel.r += pixel.r;
@@ -138,7 +123,6 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 
 	if (y - 1 >= 0 && x + 1 < ancho) // up right
 	{
-
 		pixel = get_value_from_matrix(y - 1, x + 1, ancho, alto, imagen_aux);
 		available_near_cells += 1;
 		softened_pixel.r += pixel.r;
@@ -147,14 +131,12 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 	}
 	if (y + 1 < alto) // down left
 	{
-
 		pixel = get_value_from_matrix(y + 1, x, ancho, alto, imagen_aux);
 		available_near_cells += 1;
 		softened_pixel.r += pixel.r;
 		softened_pixel.g += pixel.g;
 		softened_pixel.b += pixel.b;
 	}
-
 	if (y + 1 < alto && x + 1 < ancho) // down right
 	{
 		pixel = get_value_from_matrix(y + 1, x + 1, ancho, alto, imagen_aux);
@@ -163,7 +145,6 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 		softened_pixel.g += pixel.g;
 		softened_pixel.b += pixel.b;
 	}
-
 	if (y - 1 >= 0) // up
 	{
 		pixel = get_value_from_matrix(y - 1, x, ancho, alto, imagen_aux);
@@ -172,7 +153,6 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 		softened_pixel.g += pixel.g;
 		softened_pixel.b += pixel.b;
 	}
-
 	if (x - 1 >= 0) // left
 	{
 		pixel = get_value_from_matrix(y, x - 1, ancho, alto, imagen_aux);
@@ -181,7 +161,6 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 		softened_pixel.g += pixel.g;
 		softened_pixel.b += pixel.b;
 	}
-
 	if (x + 1 < ancho) // right
 	{
 		pixel = get_value_from_matrix(y, x + 1, ancho, alto, imagen_aux);
@@ -190,7 +169,6 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 		softened_pixel.g += pixel.g;
 		softened_pixel.b += pixel.b;
 	}
-
 	if (y + 1 < alto) // down
 	{
 		pixel = get_value_from_matrix(y + 1, x, ancho, alto, imagen_aux);
@@ -199,31 +177,27 @@ void suavizar_pixel(int x,int y ,int ancho , int alto,RGB *imagen_aux,RGB *image
 		softened_pixel.g += pixel.g;
 		softened_pixel.b += pixel.b;
 	}
-
-	int pixel_position=get_position_from_matrix(y,x,ancho,alto,imagen_aux);
-
+	int pixel_position=get_position_from_matrix(y, x, ancho, alto, imagen_aux);
 	imagen[pixel_position].r=softened_pixel.r/available_near_cells;
 	imagen[pixel_position].g=softened_pixel.g/available_near_cells;
 	imagen[pixel_position].b=softened_pixel.b/available_near_cells;
-
 }
 
 void suavizar(int ancho, int alto, RGB *imagen, int idProceso, int numProcesos, MPI_Datatype typeRGB)
 {
-	// imagen auxiliar
+	// Imagen auxiliar
 	RGB *imagen_auxiliar = (RGB *)malloc(alto * ancho * sizeof(RGB));
 
-	// filas asignadas a cada proceso
+	// Filas asignadas a cada proceso
 	int processRows = floor(alto / numProcesos);
 
-	// buffer en el que almacenaremos las secciones del array
-	// el tamÃ±ao sera igual a las filas asignadas a cada proceso
+	// Buffer en el que almacenaremos las secciones del array
+	// el tamaño sera igual a las filas asignadas a cada proceso
 	RGB *bufferRGB = (RGB *)malloc(processRows * ancho * sizeof(RGB));
 
 	//el proceso master crea la copia y la pasa a los hijos
 	if (idProceso == 0)
 	{
-		
 		for (int i = 0; i < alto * ancho; i++)
 		{
 			imagen_auxiliar[i].r = imagen[i].r;
@@ -239,10 +213,10 @@ void suavizar(int ancho, int alto, RGB *imagen, int idProceso, int numProcesos, 
 
 	MPI_Status status;
 
-	//Calculamos la ultima fila que le toca al proceso actual en funcion de su identificador
+	// Calculamos la ultima fila que le toca al proceso actual en funcion de su identificador
 	int ultimaFIla = (idProceso * processRows) + processRows;
 
-	//Cada uno suaviza su seccion concreta
+	// Cada uno suaviza su seccion concreta
 	for (int i = idProceso * processRows; i < ultimaFIla; i++)
 	{
 		for (int j = 0; j < ancho; j++)
@@ -266,12 +240,10 @@ void suavizar(int ancho, int alto, RGB *imagen, int idProceso, int numProcesos, 
 			}
 		}
 
-		// Se Reciben las distintas secciones de los hijos y se transladan a la imagen del master
+		// Se reciben las distintas secciones de los hijos y se transladan a la imagen del master
 		for (int i = 1; i < numProcesos; i++)
 		{
-
 			MPI_Recv(bufferRGB, processRows * ancho, typeRGB, i, 0, MPI_COMM_WORLD, &status);
-
 			for (int j = 0; j < processRows * ancho; j++)
 			{
 				imagen[i * processRows * ancho + j] = bufferRGB[j];
@@ -280,7 +252,7 @@ void suavizar(int ancho, int alto, RGB *imagen, int idProceso, int numProcesos, 
 	}
 	else
 	{
-		//enviamos la seccion que hayamos suavizado
+		// Enviamos la seccion que hayamos suavizado
 		MPI_Ssend(&imagen[idProceso * processRows * ancho], processRows * ancho, typeRGB, 0, 0, MPI_COMM_WORLD);
 	}
 }
