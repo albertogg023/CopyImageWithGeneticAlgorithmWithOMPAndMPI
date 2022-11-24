@@ -78,14 +78,11 @@ void crear_imagen(const RGB *imagen_objetivo, int ancho, int alto, int max,
 
 		poblacionNEM = (Individuo *) malloc(numProcesos*NEM*sizeof(Individuo));
 		assert(poblacionNEM);
-		#pragma omp parallel
+
+		#pragma omp parallel num_threads(3)
 		{
 			// Inicializar srandr
 			randomSeed = 47 * time(NULL);
-		}
-		#pragma omp parallel
-		{
-			//omp_set_nested(1);
 			#pragma omp for
 			for(i = 0; i < tam_poblacion; i++) {
 				init_imagen_aleatoria(poblacion[i].imagen, max, num_pixels);
@@ -223,9 +220,9 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 	//? genes de un padre o del otro
 
 	int random_number = aleatorio(num_pixels);
-	#pragma omp parallel sections
+	//#pragma omp parallel sections
 	{
-		#pragma omp section
+		//#pragma omp section
 		{
 			for (int i = 0; i < random_number; i++)
 			{
@@ -234,7 +231,7 @@ void cruzar(Individuo *padre1, Individuo *padre2, Individuo *hijo1, Individuo *h
 				hijo2->imagen[i] = padre2->imagen[i];
 			}
 		}
-		#pragma omp section
+		//#pragma omp section
 		{
 			for (int i = random_number; i < num_pixels; i++)
 			{
@@ -254,7 +251,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 	individuo->fitness = 0;
 
-	#pragma omp parallel for reduction(+: diff)
+	#pragma omp parallel for reduction(+: diff) num_threads(3)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
@@ -265,7 +262,7 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 
 void mutar(Individuo *actual, int max, int num_pixels)
 {
-	#pragma omp parallel for
+	#pragma omp parallel for num_threads(3)
 	for (int i = 0; i < num_pixels; i++)
 	{
 		if (aleatorio(1500)<= 1)
