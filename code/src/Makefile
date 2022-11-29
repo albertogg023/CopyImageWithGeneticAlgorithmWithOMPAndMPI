@@ -20,7 +20,15 @@ mpi: $(C_FILES)
 	$(CC) $(CFLAGS) $(C_FILES) -o $(EXEC) -DTIME -DDEBUG
 
 test_mpi:
-	mpirun -np $(NPH1) -host $(H1) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) : -np $(NPH2) -host $(H2) $(EXEC) ../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm $(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
+	mpirun \
+	-np $(NPH1) -host $(H1) $(EXEC) \
+	../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm \
+	$(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) \
+	: -np $(NPH2) -host $(H2) $(EXEC) \
+	../input/pitufo.ppm ../output/pitufo-out_$(N_GEN)_$(T_POB)_$(NGM)_$(NEM)_$(NPM).ppm \
+	$(N_GEN) $(T_POB) $(NGM) $(NEM) $(NPM) > $(OUTFILE)
 
 clean:
 	rm -f $(EXEC)
+
+

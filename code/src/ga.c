@@ -245,7 +245,9 @@ void fitness(const RGB *objetivo, Individuo *individuo, int num_pixels)
 	#pragma omp parallel for reduction(+: diff) num_threads(2)
 	for (int i = 0; i < num_pixels; i++)
 	{
-		diff +=abs(objetivo[i].r - individuo->imagen[i].r) + abs(objetivo[i].g - individuo->imagen[i].g) + abs(objetivo[i].b - individuo->imagen[i].b);
+		diff +=abs(objetivo[i].r - individuo->imagen[i].r)
+		+ abs(objetivo[i].g - individuo->imagen[i].g)
+		+ abs(objetivo[i].b - individuo->imagen[i].b);
 	}
 	individuo->fitness = diff;
 }
