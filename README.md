@@ -9,14 +9,14 @@ Este proyecto consiste en un algoritmo genético paralelo implementado en C++ ut
 - **Makefile:** El archivo `Makefile` en la carpeta `code/src` permite compilar y ejecutar el programa de manera sencilla. Puedes utilizar este archivo para compilar el código fuente y ejecutar el programa.
 
 - **Documentación:** En este repositorio, encontrarás tres documentos PDF que explican en detalle el proceso de paralelización y optimización del algoritmo genético:
-  - `Memoria-OMP.pdf`: Documento que describe las paralelizaciones y optimizaciones realizadas con OpenMP.
-  - `Memoria-MPI.pdf`: Documento que explica las paralelizaciones y optimizaciones realizadas con MPI.
-  - `Memoria-MPI-&-OMP-&-Optimized.pdf`: Documento que aborda un estudio sobre cómo combinar ambos enfoques para obtener el máximo rendimiento y analiza los mejores valores de entrada para resolver el problema. Esto corresponde 
+  - [Memoria-OMP.pdf](Memoria-OMP.pdf): Documento que describe las paralelizaciones y optimizaciones realizadas con OpenMP.
+  - [Memoria-MPI.pdf](Memoria-MPI.pdf): Documento que explica las paralelizaciones y optimizaciones realizadas con MPI.
+  - [Memoria-MPI-&-OMP-&-Optimized.pdf](Memoria-MPI-&-OMP-&-Optimized.pdf): Documento que aborda un estudio sobre cómo combinar ambos enfoques para obtener el máximo rendimiento y analiza los mejores valores de entrada para resolver el problema. Esto corresponde 
 
 ## Uso
 
 ### Aclaraciones
-Cabe destacar que, la compilación y ejecución de este comando, tan solo funcionará en las máquinas para las que fue desarrollado el programa. Esto, debido a las dependencias necesarias y las características de los equipos en los que se ejecuta. Recordemos que, este programa ha sido optimizado para equipos, con un cierto número de procesadores, cores y distintas características más.
+Cabe destacar que, la compilación y ejecución de este comando, tan solo funcionará en las máquinas para las que fue desarrollado el programa. Esto, debido a las dependencias necesarias y las características de los equipos en los que se ejecuta. Recordemos que estos equipos cuentan con un cierto número de procesadores, cores y distintas características más extremadamente importantes para la optimización realizada.
 
 
 ### Compilación del Programa
