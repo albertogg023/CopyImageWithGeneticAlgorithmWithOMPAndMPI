@@ -4,14 +4,11 @@ Este proyecto consiste en un algoritmo genético paralelo implementado en C++ ut
 
 ## Contenido del Repositorio
 
-- **Código Fuente:** El código fuente del programa se encuentra en la carpeta `code`. El algoritmo genético paralelo se implementa en varios archivos, incluyendo `main.c`, `imagen.c` y `ga.c`. Se utiliza OpenMP y MPI para aprovechar el paralelismo.
-
-- **Makefile:** El archivo `Makefile` en la carpeta `code/src` permite compilar y ejecutar el programa de manera sencilla. Puedes utilizar este archivo para compilar el código fuente y ejecutar el programa.
-
-- **Documentación:** En este repositorio, encontrarás tres documentos PDF que explican en detalle el proceso de paralelización y optimización del algoritmo genético:
-  - [Memoria-OMP.pdf](Memoria-OMP.pdf): Documento que describe las paralelizaciones y optimizaciones realizadas con OpenMP.
-  - [Memoria-MPI.pdf](Memoria-MPI.pdf): Documento que explica las paralelizaciones y optimizaciones realizadas con MPI.
-  - [Memoria-MPI-&-OMP-&-Optimized.pdf](Memoria-MPI-&-OMP-&-Optimized.pdf): Documento que aborda un estudio sobre cómo combinar ambos enfoques para obtener el máximo rendimiento y analiza los mejores valores de entrada para resolver el problema. Esto corresponde 
+- [code](code): Se encuentra el código fuente en varios archivos, incluyendo `main.c`, `imagen.c` y `ga.c`. Se utiliza OpenMP.
+- [code/src/Makefile](code/src/Makefile): El archivo `Makefile` permite compilar y ejecutar el programa de manera sencilla. Puedes utilizar este archivo para compilar el código fuente y ejecutar el programa.
+- [Memoria-OMP.pdf](Memoria-OMP.pdf): Documento que describe las paralelizaciones y optimizaciones realizadas con OpenMP.
+- [Memoria-MPI.pdf](Memoria-MPI.pdf): Documento que explica las paralelizaciones y optimizaciones realizadas con MPI.
+- [Memoria-MPI-&-OMP-&-Optimized.pdf](Memoria-MPI-&-OMP-&-Optimized.pdf): Documento que aborda un estudio sobre cómo combinar ambos enfoques para obtener el máximo rendimiento y analiza los mejores valores de entrada para resolver el problema. Esto corresponde 
 
 ## Uso
 
@@ -20,13 +17,14 @@ Cabe destacar que, la compilación y ejecución de este comando, tan solo funcio
 
 
 ### Compilación del Programa
+Ubícate en el directorio `code/src` y ejecuta el siguiente comando:
 ```bash
 make mpi
 ```
 
 ### Ejecución del Programa
 
-Una vez que hayas compilado el programa, puedes ejecutarlo con diferentes parámetros según tus necesidades. El comando general para ejecutar el programa con MPI es el siguiente:
+Una vez que hayas compilado el programa, puedes ejecutarlo con:
 
 ```bash
 make test_mpi
