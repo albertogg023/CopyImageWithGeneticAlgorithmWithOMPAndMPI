@@ -16,7 +16,7 @@ Este proyecto consiste en un algoritmo genético paralelo implementado en C++ ut
 ## Uso
 
 ### Aclaraciones
-Cabe destacar que, la compilación y ejecución de este comando, tan solo funcionará en las máquinas para las que fue desarrollado el programa. Esto, debido a las dependencias necesarias y las características de los equipos en los que se ejecuta. Recordemos que estos equipos cuentan con un cierto número de procesadores, cores y distintas características más extremadamente importantes para la optimización realizada.
+Cabe destacar que, la compilación y ejecución de este comando, tan solo funcionará en las máquinas para las que fue desarrollado el programa. Esto, debido a las dependencias necesarias y las características de los equipos en los que se ejecuta. Recordemos que estos equipos cuentan con un cierto número de procesadores, cores y distintas características extremadamente importantes para la optimización realizada.
 
 
 ### Compilación del Programa
