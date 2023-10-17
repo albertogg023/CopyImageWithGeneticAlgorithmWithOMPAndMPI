@@ -1,4 +1,4 @@
-# CopyImageWithGeneticAlgorithmWithOMP-MPI
+CopyImageWithGeneticAlgorithmWithOMPAndMPI
 
 Este proyecto consiste en un algoritmo genético paralelo implementado en C++ utilizando OpenMP y MPI. El objetivo del programa es tomar una imagen de entrada y generar una nueva imagen que sea una copia de la imagen de entrada. El algoritmo genético utiliza paralelismo para optimizar la tarea.
 
